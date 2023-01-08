@@ -5,10 +5,15 @@ import urllib.request
 
 from leosTrack.utils.filedir import FileDirectory
 
-###############################################################################
 # CONSTANTS
-TLE_URL = "https://celestrak.com/NORAD/elements/supplemental"
-###############################################################################
+# Old standard TLE URL
+# TLE_URL = "https://celestrak.com/NORAD/elements/active"
+
+# BW3 LVA debris TLE URL
+# TLE_URL = "https://celestrak.org/NORAD/elements/gp.php?CATNR=54247"
+
+# New suplimental TLE URL
+TLE_URL = "http://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=ast&FORMAT=tle"
 
 
 class TLE(FileDirectory):
@@ -29,7 +34,7 @@ class TLE(FileDirectory):
         self.satellite_brand = satellite_brand
         self.directory = tle_directory
 
-    def update_tle_file(self, tle_name:str) -> None:
+    def update_tle_file(self, tle_name: str) -> None:
         """
         Make all satellite entries uniqe in tle file
 
@@ -61,7 +66,6 @@ class TLE(FileDirectory):
 
         for idx, tle_line in enumerate(tle_file_lines):
 
-
             if idx % 3 == 0:
 
                 satellite = pattern.findall(tle_line)[0]
@@ -77,13 +81,11 @@ class TLE(FileDirectory):
 
             updated_tle += tle_line
 
-
         with open(
             f"{self.directory}/unique_{tle_name}", "w", encoding="utf8"
         ) as file:
 
             file.write(updated_tle)
-
 
     def download(self) -> tuple:
         """

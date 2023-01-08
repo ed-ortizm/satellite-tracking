@@ -1,4 +1,5 @@
 """Compute visibility of LEO sats according to observation constraints"""
+import logging
 import datetime
 import sys
 
@@ -7,6 +8,13 @@ import pyorbital
 
 from leosTrack import output
 from leosTrack.track.visible import ComputeVisibility, CONVERT
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(message)s',
+    filename='/home/edgar/satellite-tracking/data/logging/blue.log',
+    filemode='a'
+)
 
 
 class FixWindow(ComputeVisibility):
@@ -45,11 +53,13 @@ class FixWindow(ComputeVisibility):
         # Therefore in parallel the observer will be set over and over
         self._set_observer()
 
-        try: 
-        
+        try:
+
             satellite = self._set_dark_satellite(satellite_name)
 
         except pyorbital.orbital.OrbitalError:
+
+            logging.info("OrbitalError: %s", satellite_name)
 
             return satellite_name
 
@@ -79,6 +89,8 @@ class FixWindow(ComputeVisibility):
 
         except NotImplementedError:
 
+            logging.info("NotImplementedError in get observer look")
+
             return satellite_name
 
         except Exception:
@@ -103,6 +115,8 @@ class FixWindow(ComputeVisibility):
                 satellite_lon_lat_alt = satellite.get_lonlatalt(date_time)
 
             except NotImplementedError:
+
+                logging.info("NotImplementedError in get_lonlatalt")
 
                 continue
             #############################################################
